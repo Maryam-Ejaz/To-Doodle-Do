@@ -279,7 +279,7 @@ class _MyHomePageState extends State<MyHomePage> {
         TaskerPreference.setStringList(all_selected_tasks);
       },
       isActive: IsSelected,
-      taskuser: item,
+      taskUser: item,
     );
   }
 }

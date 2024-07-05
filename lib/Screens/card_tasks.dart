@@ -3,7 +3,7 @@ import 'package:Todo_list_App/model/note.dart';
 
 
 class CardTasks extends StatelessWidget {
-  Note taskuser;
+  Note taskUser;
   bool isActive;
 
   int Index;
@@ -18,7 +18,7 @@ class CardTasks extends StatelessWidget {
 
   CardTasks(
       {Key? key,
-      required this.taskuser,
+      required this.taskUser,
       required this.isActive,
       required this.Index,
       // required this.animation,
@@ -43,7 +43,7 @@ class CardTasks extends StatelessWidget {
             Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: InkWell(
-                  onTap: () => onSelected(taskuser),
+                  onTap: () => onSelected(taskUser),
                   child: isActive
                       ? const Icon(Icons.check_circle_outlined,
                           color: Colors.grey)
@@ -56,7 +56,7 @@ class CardTasks extends StatelessWidget {
               width: we * 0.025,
             ),
             Expanded(
-                child: Text(taskuser.description,
+                child: Text(taskUser.description,
                     maxLines: 20,
                     overflow: TextOverflow.clip,
                     style: TextStyle(

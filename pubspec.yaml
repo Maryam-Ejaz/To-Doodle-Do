@@ -19,7 +19,7 @@ version: 1.0.0+1
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 
 environment:
-  sdk: ">=2.16.1"
+  sdk: ">=2.19.6"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -75,6 +75,17 @@ dependencies:
 
   # Migration Kit for handling migrations.
   sa4_migration_kit: ^1.0.0
+  firebase_auth: ^5.1.1
+  firebase_core: ^3.1.1
+  get: ^4.6.6
+  cloud_firestore: ^5.0.2
+  intl: ^0.19.0
+  ndialog: ^4.3.1
+  sign_in_with_apple: ^6.1.1
+  flutter_timezone: ^2.0.0
+  flutter_local_notifications: ^17.2.1
+  firebase_messaging: ^15.0.2
+  introduction_screen: ^3.1.14
 
 flutter_icons:
   android: true
@@ -107,9 +118,18 @@ flutter:
 
   # Add assets to your application.
   assets:
-    - assets/Avatar.jpg
-    # - images/a_dot_ham.jpeg
+    - assets/
+    - assets/1.png
+    - assets/2.png
+    - assets/3.png
 
   # Add custom fonts to your application.
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: MyFont
+      fonts:
+        - asset: assets/fonts/reg.ttf
+          weight: 400
+        - asset: assets/fonts/bold.ttf
+          weight: 700
