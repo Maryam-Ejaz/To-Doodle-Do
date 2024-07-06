@@ -1,5 +1,6 @@
+import 'package:Todo_list_App/Backend/data/colors.dart';
 import 'package:flutter/material.dart';
-import '../homepage.dart';
+import '../Other Screens/homepage.dart';
 import 'DrawerWidget.dart';
 import 'package:flutter/services.dart';
 
@@ -47,7 +48,7 @@ class _DrawerState extends State<DrawerState> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: const Color(0xff43025f),
+      backgroundColor: kDrawerColor,
       body: Stack(children: [
         DrawerWidget(
           closedDrawer: closeDrawer,

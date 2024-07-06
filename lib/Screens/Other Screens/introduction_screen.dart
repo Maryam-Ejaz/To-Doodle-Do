@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:Todo_list_App/data/colors.dart';
-import 'package:Todo_list_App/Screens/Authentication/login_screen.dart';
+import 'package:Todo_list_App/Backend/data/colors.dart';
+import 'package:Todo_list_App/Screens/Other Screens/Authentication/login_screen.dart';
 import 'package:Todo_list_App/Screens/custom_widgets/custom_buttons.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
-import '../../data/strings.dart';
+import '../../Backend/data/strings.dart';
 
 class MyIntroductionScreen extends StatefulWidget {
   const MyIntroductionScreen({Key? key}) : super(key: key);

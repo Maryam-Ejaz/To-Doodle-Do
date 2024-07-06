@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Todo_list_App/model/note.dart';
+import 'package:Todo_list_App/Backend/model/note.dart';
 
 
 class CardTasks extends StatelessWidget {

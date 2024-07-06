@@ -1,30 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:Todo_list_App/providers/signup_provider.dart';
-import 'package:Todo_list_App/Screens/Authentication/login_screen.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:Todo_list_App/Screens/Other Screens/Authentication/forgot_passwprd_screen.dart';
+import 'package:Todo_list_App/Screens/Other Screens/Authentication/signup_screen.dart';
 import 'package:Todo_list_App/Screens/custom_widgets/custom_buttons.dart';
-import 'package:Todo_list_App/Screens/custom_widgets/custom_snackbars.dart';
-import 'package:Todo_list_App/Screens/custom_widgets/custom_textfield.dart';
+import 'package:Todo_list_App/Screens//custom_widgets/custom_snackbars.dart';
+import 'package:Todo_list_App/Screens//custom_widgets/custom_textfield.dart';
 import 'package:provider/provider.dart';
+import 'package:Todo_list_App/Backend/data/colors.dart';
+import 'package:Todo_list_App/Backend/providers/login_provider.dart';
 
-import '../../../data/themes.dart';
-
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
-  TextEditingController nameController = TextEditingController();
+class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passController = TextEditingController();
-  TextEditingController conPassController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SignUpProvider>(builder: (context, signupProvider, child) {
+    return Consumer<LoginProvider>(builder: (context, loginProvider, child) {
       return SafeArea(
         child: Scaffold(
           body: SingleChildScrollView(
@@ -36,11 +35,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const SizedBox(height: 30),
                   const Center(
                     child: Text(
-                      'Registration',
+                      'Hello Again!',
                       style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black45),
+                          color: kBlack),
                     ),
                   ),
                   const SizedBox(height: 5.0),
@@ -48,26 +47,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 40.0),
                       child: Text(
-                        'Please register yourself\n to continue',
+                        'Welcome back you have\n been missed',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 17, color: Colors.black45),
+                        style: TextStyle(fontSize: 17, color: kBlack),
                       ),
                     ),
                   ),
                   const SizedBox(height: 70),
                   CustomTextField(
                     prefixIcon: const Icon(
-                      Icons.person,
-                      color:  Color(0xff43025f),
-                    ),
-                    controller: nameController,
-                    hintText: 'Name',
-                  ),
-                  const SizedBox(height: 15),
-                  CustomTextField(
-                    prefixIcon: const Icon(
                       Icons.alternate_email,
-                      color:  Color(0xff43025f),
+                      color: kPrimaryColor,
                     ),
                     controller: emailController,
                     hintText: 'Email',
@@ -76,78 +66,76 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   CustomTextField(
                     prefixIcon: const Icon(
                       Icons.lock_open,
-                      color:  Color(0xff43025f),
+                      color: kPrimaryColor,
                     ),
                     controller: passController,
-                    obscure: !signupProvider.isPasswordVisible,
+                    obscure: !loginProvider.isPasswordVisible,
                     hintText: 'Password',
                     suffixIcon: IconButton(
                       onPressed: () {
-                        signupProvider.togglePasswordVisibility();
+                        loginProvider.togglePasswordVisibility();
                       },
                       icon: Icon(
-                        signupProvider.isPasswordVisible
+                        loginProvider.isPasswordVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color:Color(0xff43025f),
+                        color: kPrimaryColor,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 15),
-                  CustomTextField(
-                    prefixIcon: const Icon(
-                      Icons.lock_open,
-                      color: Color(0xff43025f),
-                    ),
-                    controller: conPassController,
-                    obscure: !signupProvider.isPasswordVisible,
-                    hintText: 'Confirm Password',
-                    suffixIcon: IconButton(
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
                       onPressed: () {
-                        signupProvider.togglePasswordVisibility();
+                        Get.to(() => const ForgotPasswordScreen());
                       },
-                      icon: Icon(
-                        signupProvider.isPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: Color(0xff43025f),
+                      child: const Text(
+                        'Recovery Password',
+                        style: TextStyle(color: kBlack),
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 20.0),
                   MyButtonLong(
-                      name: 'Sign Up',
+                      name: 'Sign In',
                       onTap: () {
                         if (emailController.text.isEmpty ||
-                            nameController.text.isEmpty ||
                             passController.text.isEmpty) {
                           return CustomSnackBar.showError(
                               'Please fill all the fields');
-                        } else {
-                          signupProvider.signUpWithEmailAndPassword(
-                              nameController.text,
-                              emailController.text,
-                              passController.text,
-                              context);
                         }
+                        loginProvider.signInWithEmailAndPassword(
+                            emailController.text, passController.text, context);
                       }),
                   const SizedBox(height: 20.0),
+                  // Row(
+                  //   children: const [
+                  //     SizedBox(width: 20),
+                  //     Expanded(child: Divider(color: kBlack)),
+                  //     SizedBox(width: 20),
+                  //     Text('OR'),
+                  //     SizedBox(width: 20),
+                  //     Expanded(child: Divider(color: kBlack)),
+                  //     SizedBox(width: 20),
+                  //   ],
+                  // ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "Already Register?",
+                        "Not a Member?",
                         style: TextStyle(
-                            fontSize: 15.0, color: Colors.black45.withOpacity(0.4)),
+                            fontSize: 15.0, color: kBlack.withOpacity(0.4)),
                       ),
                       TextButton(
                           onPressed: () {
-                            Get.to(() => const LoginScreen());
+                            Get.to(() => const SignUpScreen());
                           },
                           child: const Text(
-                            'Login Now',
-                            style: TextStyle(color: Colors.black45),
+                            'Register Now',
+                            style: TextStyle(color: kBlack),
                           ))
                     ],
                   ),

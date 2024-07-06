@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:Todo_list_App/data/colors.dart';
-import 'package:Todo_list_App/data/enums/task_sorting.dart';
-import 'package:Todo_list_App/data/services/notification_services.dart';
-import 'package:Todo_list_App/providers/task_provider.dart';
+import 'package:Todo_list_App/Backend/data/colors.dart';
+import 'package:Todo_list_App/Backend/data/enums/task_sorting.dart';
+import 'package:Todo_list_App/Backend/data/services/notification_services.dart';
+import 'package:Todo_list_App/Backend/providers/task_provider.dart';
 import 'package:Todo_list_App/Screens/TaskScreens/add_task_screen.dart';
 import 'package:Todo_list_App/Screens/custom_widgets/custom_snackbars.dart';
 import 'package:Todo_list_App/Screens/custom_widgets/task_block.dart';
 import 'package:provider/provider.dart';
 import 'package:Todo_list_App/Screens/custom_widgets/setting_bottom_sheet.dart';
-import '../../../data/enums/task_filter.dart';
+import '../../../Backend/data/enums/task_filter.dart';
 import '../../Screens/custom_widgets/delete_dialog.dart';
 
 
@@ -173,64 +173,64 @@ class _TasksScreenState extends State<TasksScreen> {
                   ),
                 ],
               ),
-              // Expanded(
-              //   child: StreamBuilder(
-              //     stream: taskProvider.taskStream,
-              //     builder: (context, snapshot) {
-              //       if (snapshot.hasData) {
-              //         final tasks = snapshot.data;
-              //
-              //         return ListView.builder(
-              //           itemCount: tasks?.length,
-              //           itemBuilder: (context, index) {
-              //             final task = tasks![index];
-              //             return Dismissible(
-              //               key: Key(task.id),
-              //               direction: DismissDirection.endToStart,
-              //               background: Container(
-              //                 color: Colors.red,
-              //                 alignment: Alignment.centerRight,
-              //                 padding:
-              //                 const EdgeInsets.symmetric(horizontal: 16.0),
-              //                 child:
-              //                 const Icon(Icons.delete, color: Colors.white),
-              //               ),
-              //               onDismissed: (direction) async {
-              //                 taskProvider.deleteTask(task.id);
-              //                 CustomSnackBar.showSuccess(
-              //                     'Task Deleted Successfully');
-              //               },
-              //               child: TaskBlock(
-              //                 title: task.title,
-              //                 description: task.description,
-              //                 onDelete: () async {
-              //                   final confirmed = await CustomDialog
-              //                       .showDeleteConfirmationDialog(context);
-              //                   if (confirmed != null && confirmed) {
-              //                     taskProvider.deleteTask(task.id);
-              //                     CustomSnackBar.showSuccess(
-              //                         'Task Deleted Successfully');
-              //                   }
-              //                 },
-              //                 done: task.done,
-              //                 onDone: () {
-              //                   taskProvider.updateTaskStatus(
-              //                       task.id, !task.done);
-              //                 },
-              //                 dueDate: task.dueDate,
-              //                 createDate: task.createDate,
-              //               ),
-              //             );
-              //           },
-              //         );
-              //       } else if (snapshot.hasError) {
-              //         return Text('Error: ${snapshot.error}');
-              //       } else {
-              //         return const Center(child: CircularProgressIndicator());
-              //       }
-              //     },
-              //   ),
-              // ),
+              Expanded(
+                child: StreamBuilder(
+                  stream: taskProvider.taskStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final tasks = snapshot.data;
+
+                      return ListView.builder(
+                        itemCount: tasks?.length,
+                        itemBuilder: (context, index) {
+                          final task = tasks![index];
+                          return Dismissible(
+                            key: Key(task.id),
+                            direction: DismissDirection.endToStart,
+                            background: Container(
+                              color: Colors.red,
+                              alignment: Alignment.centerRight,
+                              padding:
+                              const EdgeInsets.symmetric(horizontal: 16.0),
+                              child:
+                              const Icon(Icons.delete, color: Colors.white),
+                            ),
+                            onDismissed: (direction) async {
+                              taskProvider.deleteTask(task.id);
+                              CustomSnackBar.showSuccess(
+                                  'Task Deleted Successfully');
+                            },
+                            child: TaskBlock(
+                              title: task.title,
+                              description: task.description,
+                              onDelete: () async {
+                                final confirmed = await CustomDialog
+                                    .showDeleteConfirmationDialog(context);
+                                if (confirmed != null && confirmed) {
+                                  taskProvider.deleteTask(task.id);
+                                  CustomSnackBar.showSuccess(
+                                      'Task Deleted Successfully');
+                                }
+                              },
+                              done: task.done,
+                              onDone: () {
+                                taskProvider.updateTaskStatus(
+                                    task.id, !task.done);
+                              },
+                              dueDate: task.dueDate,
+                              createDate: task.createDate,
+                            ),
+                          );
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
+              ),
             ],
           ),
         ),

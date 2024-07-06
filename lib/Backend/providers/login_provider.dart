@@ -10,7 +10,7 @@ import 'package:Todo_list_App/Screens/TaskScreens/tasks_screen.dart';
 import 'package:Todo_list_App/Screens/custom_widgets/custom_snackbars.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:Todo_list_App/Screens/homepage.dart';
+import 'package:Todo_list_App/Screens/Other%20Screens/homepage.dart';
 class LoginProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isPasswordVisible = false;
@@ -32,7 +32,7 @@ class LoginProvider extends ChangeNotifier {
         email: email,
         password: password,
       );
-      CustomSnackBar.showSuccess('Login successfully');
+      CustomSnackBar.showSuccess('Login successful.');
       dialog.dismiss();
       Get.offAll(() => const DrawerState());
     } catch (e) {

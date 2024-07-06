@@ -1,29 +1,31 @@
+import 'package:Todo_list_App/Backend/data/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/get_navigation.dart';
-import 'package:Todo_list_App/Screens/Authentication/forgot_passwprd_screen.dart';
-import 'package:Todo_list_App/Screens/Authentication/signup_screen.dart';
+import 'package:get/get.dart';
+import 'package:Todo_list_App/Backend/providers/signup_provider.dart';
+import 'package:Todo_list_App/Screens/Other Screens/Authentication/login_screen.dart';
 import 'package:Todo_list_App/Screens/custom_widgets/custom_buttons.dart';
-import 'package:Todo_list_App/Screens//custom_widgets/custom_snackbars.dart';
-import 'package:Todo_list_App/Screens//custom_widgets/custom_textfield.dart';
+import 'package:Todo_list_App/Screens/custom_widgets/custom_snackbars.dart';
+import 'package:Todo_list_App/Screens/custom_widgets/custom_textfield.dart';
 import 'package:provider/provider.dart';
-import 'package:Todo_list_App/data/themes.dart';
-import 'package:Todo_list_App/providers/login_provider.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+import '../../../Backend/data/themes.dart';
+
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
+  TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passController = TextEditingController();
+  TextEditingController conPassController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LoginProvider>(builder: (context, loginProvider, child) {
+    return Consumer<SignUpProvider>(builder: (context, signupProvider, child) {
       return SafeArea(
         child: Scaffold(
           body: SingleChildScrollView(
@@ -35,11 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 30),
                   const Center(
                     child: Text(
-                      'Hello Again!',
+                      'Registration',
                       style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black26),
+                          color: kBlack),
                     ),
                   ),
                   const SizedBox(height: 5.0),
@@ -47,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 40.0),
                       child: Text(
-                        'Welcome back you have\n been missed',
+                        'Please register yourself\n to continue',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 17, color: Colors.black45),
                       ),
@@ -56,8 +58,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 70),
                   CustomTextField(
                     prefixIcon: const Icon(
+                      Icons.person,
+                      color: kPrimaryColor,
+                    ),
+                    controller: nameController,
+                    hintText: 'Name',
+                  ),
+                  const SizedBox(height: 15),
+                  CustomTextField(
+                    prefixIcon: const Icon(
                       Icons.alternate_email,
-                      color: Color(0xff43025f),
+                      color: kPrimaryColor,
                     ),
                     controller: emailController,
                     hintText: 'Email',
@@ -66,76 +77,78 @@ class _LoginScreenState extends State<LoginScreen> {
                   CustomTextField(
                     prefixIcon: const Icon(
                       Icons.lock_open,
-                      color: Color(0xff43025f),
+                      color: kPrimaryColor,
                     ),
                     controller: passController,
-                    obscure: !loginProvider.isPasswordVisible,
+                    obscure: !signupProvider.isPasswordVisible,
                     hintText: 'Password',
                     suffixIcon: IconButton(
                       onPressed: () {
-                        loginProvider.togglePasswordVisibility();
+                        signupProvider.togglePasswordVisibility();
                       },
                       icon: Icon(
-                        loginProvider.isPasswordVisible
+                        signupProvider.isPasswordVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color: Theme.of(context).primaryColor,
+                        color: kPrimaryColor,
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
+                  const SizedBox(height: 15),
+                  CustomTextField(
+                    prefixIcon: const Icon(
+                      Icons.lock_open,
+                      color: kPrimaryColor,
+                    ),
+                    controller: conPassController,
+                    obscure: !signupProvider.isPasswordVisible,
+                    hintText: 'Confirm Password',
+                    suffixIcon: IconButton(
                       onPressed: () {
-                        Get.to(() => const ForgotPasswordScreen());
+                        signupProvider.togglePasswordVisibility();
                       },
-                      child: const Text(
-                        'Recovery Password',
-                        style: TextStyle(color: Colors.black45),
+                      icon: Icon(
+                        signupProvider.isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: kPrimaryColor,
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20.0),
                   MyButtonLong(
-                      name: 'Sign In',
+                      name: 'Sign Up',
                       onTap: () {
                         if (emailController.text.isEmpty ||
+                            nameController.text.isEmpty ||
                             passController.text.isEmpty) {
                           return CustomSnackBar.showError(
                               'Please fill all the fields');
+                        } else {
+                          signupProvider.signUpWithEmailAndPassword(
+                              nameController.text,
+                              emailController.text,
+                              passController.text,
+                              context);
                         }
-                        loginProvider.signInWithEmailAndPassword(
-                            emailController.text, passController.text, context);
                       }),
                   const SizedBox(height: 20.0),
-                  // Row(
-                  //   children: const [
-                  //     SizedBox(width: 20),
-                  //     Expanded(child: Divider(color: kBlack)),
-                  //     SizedBox(width: 20),
-                  //     Text('OR'),
-                  //     SizedBox(width: 20),
-                  //     Expanded(child: Divider(color: kBlack)),
-                  //     SizedBox(width: 20),
-                  //   ],
-                  // ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "Not a Member?",
+                        "Already Register?",
                         style: TextStyle(
-                            fontSize: 15.0, color:Colors.black45.withOpacity(0.4)),
+                            fontSize: 15.0, color: Colors.black45.withOpacity(0.4)),
                       ),
                       TextButton(
                           onPressed: () {
-                            Get.to(() => const SignUpScreen());
+                            Get.to(() => const LoginScreen());
                           },
                           child: const Text(
-                            'Register Now',
-                            style: TextStyle(color: Colors.black45),
+                            'Login Now',
+                            style: TextStyle(color: kBlack),
                           ))
                     ],
                   ),

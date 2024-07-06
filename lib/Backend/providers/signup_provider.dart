@@ -34,7 +34,7 @@ class SignUpProvider extends ChangeNotifier {
       );
       User? user = userCredential.user;
       storeUserData(userId: user!.uid, name: name, email: email);
-      CustomSnackBar.showSuccess('SignUp Successfully');
+      CustomSnackBar.showSuccess('SignUp Successful');
       dialog.dismiss();
       Get.offAll(() => const DrawerState());
     } catch (e) {

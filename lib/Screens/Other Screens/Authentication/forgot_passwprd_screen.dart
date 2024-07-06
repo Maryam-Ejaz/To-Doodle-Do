@@ -1,12 +1,13 @@
+import 'package:Todo_list_App/Backend/data/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:Todo_list_App/Screens/Authentication/login_screen.dart';
+import 'package:Todo_list_App/Screens/Other Screens/Authentication/login_screen.dart';
 import 'package:Todo_list_App/Screens/custom_widgets/custom_buttons.dart';
 import 'package:get/get.dart';
 import 'package:Todo_list_App/Screens//custom_widgets/custom_textfield.dart';
 import 'package:provider/provider.dart';
 
-import '../../../data/themes.dart';
-import '../../../providers/login_provider.dart';
+import '../../../Backend/data/themes.dart';
+import '../../../Backend/providers/login_provider.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key? key}) : super(key: key);
@@ -35,7 +36,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                        color: kBlack,
                   ),
                 ),
                 ),
@@ -54,7 +55,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 CustomTextField(
                   prefixIcon: const Icon(
                     Icons.alternate_email,
-                    color:  Color(0xff43025f),
+                    color: kPrimaryColor,
                   ),
                   controller: emailController,
                   hintText: 'Email',

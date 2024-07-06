@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:Todo_list_App/Animation/fadeAnimation.dart';
-import 'package:Todo_list_App/db/notes_database.dart';
-import 'package:Todo_list_App/Screens/note_form.dart';
+import 'package:Todo_list_App/Backend/Animation/fadeAnimation.dart';
+import 'package:Todo_list_App/Backend/db/notes_database.dart';
+import 'package:Todo_list_App/Screens/Other%20Screens/note_form.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../model/note.dart';
+import '/Backend/model/note.dart';
 
 class Note_Task extends StatefulWidget {
   final Note? note;

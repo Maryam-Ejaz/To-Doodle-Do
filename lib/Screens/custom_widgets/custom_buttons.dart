@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:Todo_list_App/data/themes.dart';
+import 'package:Todo_list_App/Backend/data/colors.dart';
 
 class MyButton extends StatelessWidget {
   final String name;
@@ -16,7 +16,7 @@ class MyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: myTheme.lightTheme.cardColor,
+        backgroundColor: kPrimaryColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
         ),
@@ -26,7 +26,7 @@ class MyButton extends StatelessWidget {
         name,
         style: const TextStyle(
           fontSize: 16,
-          color: Colors.white,
+          color: kWhite,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -52,7 +52,7 @@ class MyTextButton extends StatelessWidget {
         name,
         style: const TextStyle(
           fontSize: 17,
-          color: Colors.white,
+          color: kPrimaryColor,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -80,7 +80,7 @@ class MyButtonLong extends StatelessWidget {
         width: Get.width,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: color ?? myTheme.lightTheme.cardColor,
+            backgroundColor: color ?? kPrimaryColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),

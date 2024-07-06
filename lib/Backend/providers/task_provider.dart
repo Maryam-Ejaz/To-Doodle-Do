@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:Todo_list_App/data/enums/task_sorting.dart';
-import 'package:Todo_list_App/Screens/Authentication/login_screen.dart';
+import 'package:Todo_list_App/Backend/data/enums/task_sorting.dart';
+import 'package:Todo_list_App/Screens/Other Screens/Authentication/login_screen.dart';
 import 'package:Todo_list_App/Screens/custom_widgets/custom_snackbars.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:get/get.dart';
@@ -29,23 +29,62 @@ class TaskProvider extends ChangeNotifier {
     fetchTasks();
   }
 
-  Future<void> addTask(
-      String title, String description, BuildContext context) async {
+  // Future<void> addTask(String title, String description, String category, BuildContext context) async {
+  //   ProgressDialog dialog = ProgressDialog(context,
+  //       title: const Text('Loading'), message: const Text('Please wait'));
+  //   try {
+  //     dialog.show();
+  //     CollectionReference users = FirebaseFirestore.instance.collection('users');
+  //     await _firestore.collection('tasks').add({
+  //       'title': title,
+  //       'description': description ?? '',
+  //       'category': category,
+  //       'uid': user?.uid,
+  //       'done': false,
+  //       'create_at': DateTime.now(),
+  //       'due': selectedDueDate,
+  //     });
+  //     // DateTime taskAddedTime = DateTime.now();
+  //     // DateTime notificationTime = taskAddedTime.add(const Duration(minutes: 1));
+  //     print(selectedDueDate);
+  //     await LocalNotificationService().scheduleNotification(
+  //       id: 1,
+  //       title: 'Task Reminder',
+  //       body: 'Don\'t forget to complete your task: Alfred Local Notification',
+  //       scheduledNotificationDateTime: selectedDueDate!,
+  //     );
+  //
+  //     dialog.dismiss();
+  //     Get.back();
+  //     CustomSnackBar.showSuccess('Task Added Successfully');
+  //   } catch (e) {
+  //     CustomSnackBar.showError('Error adding task: $e');
+  //     dialog.dismiss();
+  //     rethrow;
+  //   }
+  // }
+
+  Future<void> addTask(String title, String description, String category, BuildContext context) async {
     ProgressDialog dialog = ProgressDialog(context,
         title: const Text('Loading'), message: const Text('Please wait'));
     try {
       dialog.show();
-      await _firestore.collection('tasks').add({
+
+      CollectionReference tasks = _firestore.collection('tasks');
+      await tasks.add({
         'title': title,
         'description': description ?? '',
+        'category': category,
         'uid': user?.uid,
         'done': false,
         'create_at': DateTime.now(),
         'due': selectedDueDate,
+      }).then((DocumentReference doc) {
+        print("Document added with ID: ${doc.id}");
+      }).catchError((error) {
+        throw Exception("Failed to add task: $error");
       });
-      // DateTime taskAddedTime = DateTime.now();
-      // DateTime notificationTime = taskAddedTime.add(const Duration(minutes: 1));
-      print(selectedDueDate);
+
       await LocalNotificationService().scheduleNotification(
         id: 1,
         title: 'Task Reminder',
@@ -143,7 +182,7 @@ class TaskProvider extends ChangeNotifier {
   void logout() async {
     try {
       await _auth.signOut();
-      CustomSnackBar.showSuccess('Logout successfully');
+      CustomSnackBar.showSuccess('Logout successful');
       Get.offAll(() => const LoginScreen());
     } catch (e) {
       print('Error signing out: $e');
@@ -200,4 +239,5 @@ class TaskProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
 }
