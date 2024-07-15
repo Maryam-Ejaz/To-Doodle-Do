@@ -35,7 +35,7 @@ class _LineProgressState extends State<LineProgress>
   @override
   Widget build(BuildContext context) {
     return LinearProgressIndicator(
-      value: _animation.value + widget.value.toDouble() /10,
+      value: _animation.value + widget.value.toDouble() ,
       valueColor:
            AlwaysStoppedAnimation(widget.Color),
       backgroundColor: Colors.purple[100],

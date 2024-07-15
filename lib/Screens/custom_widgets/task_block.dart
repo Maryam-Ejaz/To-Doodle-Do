@@ -1,7 +1,9 @@
+import 'package:Todo_list_App/Backend/data/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
+import 'dart:math';
 import 'package:Todo_list_App/Backend/data/themes.dart';
 
 class TaskBlock extends StatelessWidget {
@@ -13,7 +15,9 @@ class TaskBlock extends StatelessWidget {
   final VoidCallback onDone;
   final String description;
 
-  const TaskBlock(
+
+
+  TaskBlock(
       {super.key,
       required this.title,
       required this.description,
@@ -23,16 +27,27 @@ class TaskBlock extends StatelessWidget {
       required this.dueDate,
       required this.createDate});
 
+  final colorIcon = [
+    Colors.teal,
+    Colors.blue,
+    Colors.pinkAccent,
+    Colors.purple,
+    Colors.indigo
+  ];
+
   @override
   Widget build(BuildContext context) {
+    final random = Random();
+    int index = random.nextInt(colorIcon.length);
+    final color_ = colorIcon[index];
     return Container(
         margin: const EdgeInsets.symmetric(vertical: 5),
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: kWhite,
           borderRadius: BorderRadius.circular(15), // Set the border radius
         ),
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(20.0),
           child: Row(
             children: [
               SizedBox(
@@ -74,13 +89,16 @@ class TaskBlock extends StatelessWidget {
                     color: Theme.of(context).primaryColor,
                     onPressed: onDone,
                     icon: Icon(
-                        done ? Icons.check_box : Icons.check_box_outline_blank),
+                        done ? Icons.check_circle_rounded : Icons.circle_outlined,
+                        color: color_,),
+
                   ),
+                  const SizedBox(height: 8),
                   IconButton(
                       onPressed: onDelete,
                       icon: const Icon(
                         Icons.delete,
-                        color: Colors.red,
+                        color: kPrimaryColor,
                       )),
                 ],
               ),

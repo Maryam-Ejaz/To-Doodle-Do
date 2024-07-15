@@ -122,6 +122,7 @@ flutter:
     - assets/1.png
     - assets/2.png
     - assets/3.png
+    - assets/user.png
 
   # Add custom fonts to your application.
   # For details regarding fonts from package dependencies,

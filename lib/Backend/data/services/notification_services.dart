@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 class NotificationServices {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
+
   void requestNotificationPermission() async {
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
@@ -39,6 +40,7 @@ class NotificationServices {
   }
 
   void isTokenRefresh() async {
+    await FirebaseMessaging.instance.setAutoInitEnabled(true);
     messaging.onTokenRefresh.listen((event) {
       event.toString();
       if (kDebugMode) {

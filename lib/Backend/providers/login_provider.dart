@@ -1,21 +1,32 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:Todo_list_App/Backend/providers/task_provider.dart';
 import 'package:Todo_list_App/Screens/MenuDrawer/DrawerState.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:Todo_list_App/Screens/TaskScreens/tasks_screen.dart';
 import 'package:Todo_list_App/Screens/custom_widgets/custom_snackbars.dart';
 import 'package:ndialog/ndialog.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:Todo_list_App/Screens/Other%20Screens/homepage.dart';
+
+import '../../Screens/Other Screens/Authentication/login_screen.dart';
 class LoginProvider extends ChangeNotifier {
+  final Function _triggerRebuildMultiProvider;
+
+  LoginProvider(Function triggerRebuildMultiProvider)
+      : _triggerRebuildMultiProvider = triggerRebuildMultiProvider,
+        super();
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isPasswordVisible = false;
 
   bool get isPasswordVisible => _isPasswordVisible;
+
 
   void togglePasswordVisibility() {
     _isPasswordVisible = !_isPasswordVisible;
@@ -33,6 +44,9 @@ class LoginProvider extends ChangeNotifier {
         password: password,
       );
       CustomSnackBar.showSuccess('Login successful.');
+      Provider.of<TaskProvider>(context, listen:false).fetchCategories_();
+      Provider.of<TaskProvider>(context, listen:false).fetchTasks();
+      Provider.of<TaskProvider>(context, listen:false).getUserName();
       dialog.dismiss();
       Get.offAll(() => const DrawerState());
     } catch (e) {
@@ -53,6 +67,22 @@ class LoginProvider extends ChangeNotifier {
     } catch (e) {
       CustomSnackBar.showError('Error sending password reset email: $e');
       dialog.dismiss();
+      rethrow;
+    }
+  }
+
+  void logout() async {
+    try {
+      await _auth.signOut();
+      await _auth.authStateChanges();
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      notifyListeners();
+      _triggerRebuildMultiProvider();
+      CustomSnackBar.showSuccess('Logout successful');
+      Get.offAll(() => const LoginScreen());
+    } catch (e) {
+      print('Error signing out: $e');
       rethrow;
     }
   }

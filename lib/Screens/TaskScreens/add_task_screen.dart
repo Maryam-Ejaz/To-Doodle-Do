@@ -19,15 +19,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
-  late String selectedCategory; // Default category
-  final List<String> categories = [
-    'Work',
-    'Personal',
-    'Other'
-  ]; // List of categories
+  String selectedCategory = "Work"; // Default category
+
 
   @override
   Widget build(BuildContext context) {
+
     return Consumer<TaskProvider>(builder: (context, taskProvider, child) {
       return Scaffold(
         appBar: AppBar(
@@ -95,7 +92,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           contentPadding: EdgeInsets.symmetric(horizontal: 15.0),
                         ),
                         itemHeight: 65, // Adjust the itemHeight to match the container height
-                        items: categories.map<DropdownMenuItem<String>>((String value) {
+                        items: taskProvider.categories.map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),

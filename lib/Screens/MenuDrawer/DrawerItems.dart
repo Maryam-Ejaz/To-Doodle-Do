@@ -20,8 +20,8 @@ class DrawerItem {
 
 class DrawerItems {
   static final categories = DrawerItem(
-    title: "Categories",
-    icon: Icons.grid_view_outlined,
+    title: "Home",
+    icon: Icons.home_filled,
     color: Colors.grey,
   );
 

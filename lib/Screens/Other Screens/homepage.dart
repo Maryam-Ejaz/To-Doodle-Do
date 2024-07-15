@@ -1,23 +1,28 @@
+import 'package:Todo_list_App/Backend/model/task_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:Todo_list_App/Screens/Other Screens/note_task.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../Backend/Animation/fadeAnimation.dart';
+import '../../Backend/data/enums/task_filter.dart';
+import '../../Backend/data/enums/task_sorting.dart';
+import '../../Backend/data/services/notification_services.dart';
 import '../../Backend/data/shared/Task_saved.dart';
 import '../../Backend/data/tasks.dart';
 import '../../Backend/Animation/linearprogress.dart';
 import '../../Backend/data/time_say.dart';
-import '../../Backend/db/notes_database.dart';
-import '../../Backend/model/note.dart';
 import '../TaskScreens/add_task_screen.dart';
+import '../custom_widgets/add_category_widget.dart';
+import '../custom_widgets/custom_snackbars.dart';
+import '../custom_widgets/delete_dialog.dart';
 import '../custom_widgets/setting_bottom_sheet.dart';
 import 'package:Todo_list_App/Backend/providers/task_provider.dart';
-import 'button_change_them.dart';
+import '../custom_widgets/task_block.dart';
 import 'package:Todo_list_App/Backend/data/colors.dart';
-import 'card_tasks.dart';
+
 
 class MyHomePage extends StatefulWidget {
   VoidCallback openDrawer;
@@ -28,47 +33,43 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> all_selected_tasks = []; // your tasks
-
-  List<Note> notes = []; // get info from Database and add to this list
-
-  bool isLoading = false; 
-
+  NotificationServices notificationServices = NotificationServices();
+  Offset initialPosition = Offset(0, 0);
+  Offset currentPosition = Offset(0, 0);
 
   @override
   void initState() {
-    // TODO: implement initState
-    all_selected_tasks = TaskerPreference.getString() ?? []; 
     super.initState();
-    refreshNote();
-  }
-
-  @override
-  void dispose() {
-    // TODO: close Database of Note ...
-    NotesDatabase.instance.close();
-    super.dispose();
-  }
-
-  // Todo for load notd from Database ..
-  Future refreshNote() async {
-    setState(() => true);
-    notes = await NotesDatabase.instance.readAllNotes();
-    setState(() => false);
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      var we = MediaQuery.of(context).size.width;
+      var he = MediaQuery.of(context).size.height;
+      setState(() {
+        initialPosition = Offset(we - 60, he - 60);
+        currentPosition = initialPosition;
+      });
+    });
+    notificationServices.requestNotificationPermission();
+    notificationServices.getDeviceToken().then((value) {
+      print('Device token');
+      print(value);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     var we = MediaQuery.of(context).size.width;
     var he = MediaQuery.of(context).size.height;
+    // Provider.of<TaskProvider>(context, listen:false).fetchCategories_();
+    // Provider.of<TaskProvider>(context, listen:false).fetchTasks();
+
+
 
     return Consumer<TaskProvider>(builder: (context, taskProvider, child) {
+
       return Scaffold(
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: AppBarTheme
-              .of(context)
-              .backgroundColor,
+          backgroundColor: backGroundColor,
           actions: [
             Row(
               //crossAxisAlignment: CrossAxisAlignment.end,
@@ -85,29 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   width: we * 0.8, // 0.07  0.73
                 ),
                 SizedBox(
-                  width: we * 0.01,
+                  width: we * 0.03,
                 ),
-                // IconButton(
-                //     onPressed: () {
-                //       Get.bottomSheet(
-                //         SettingsBottomSheet(
-                //           username: taskProvider.username.toString(),
-                //           onUsernameChanged: (value) {
-                //             taskProvider.updateUsername(value);
-                //           },
-                //           onUpdatePressed: () {
-                //             taskProvider.updateUserData();
-                //             Get.back();
-                //           },
-                //           onLogoutPressed: () {
-                //             taskProvider.logout();
-                //             Get.back();
-                //           },
-                //         ),
-                //         backgroundColor: Colors.white,
-                //       );
-                //     },
-                //     icon: const Icon(Icons.settings, color: kPrimaryColor,)),
                 SizedBox(
                   width: we * 0.02, // 0.07
                 ),
@@ -116,208 +96,396 @@ class _MyHomePageState extends State<MyHomePage> {
             )
           ],
         ),
-        body: SizedBox(
-          width: we,
-          height: he,
-          child: Column(
-            children: [
-              FadeAnimation(
-                delay: 0.8,
-                child: Container(
-                  margin: EdgeInsets.only(top: he * 0.02),
-                  width: we * 0.9,
-                  height: he * 0.15,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Timecall(),
-                      SizedBox(
-                        height: he * 0.06,
-                      ),
-                      Text(
-                        "CATEGORIES",
-                        style: TextStyle(
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.only(left: 2, right: 2),
+          child: SizedBox(
+            //width: we-20,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FadeAnimation(
+                  delay: 0.8,
+                  child: Container(
+                    margin: EdgeInsets.only(top: he * 0.02, left: 18),
+                    width: we * 0.9,
+                    height: he * 0.15,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Timecall(),
+                        SizedBox(
+                          height: he * 0.06,
+                        ),
+                        Text(
+                          "CATEGORIES",
+                          style: TextStyle(
                             letterSpacing: 1,
                             color: Colors.grey.withOpacity(0.8),
-                            fontSize: 13),
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                FadeAnimation(
+                  delay: 1,
+                  child: SizedBox(
+                    width: we * 2,
+                    height: he * 0.16,
+                    child: taskProvider.isLoading
+                        ? Center(child: CircularProgressIndicator())
+                        : ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, i) {
+                        if (i < taskProvider.taskList.length) {
+                          return GestureDetector(
+                            onTap: () {
+                              taskProvider.updateFilter(TaskFilter.all, taskProvider.taskList[i].title);
+                            },
+                            child: Card(
+                              color: Color(0xEAFFFFFF),
+                              margin: EdgeInsets.only(left: 23),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              elevation: 10,
+                              shadowColor: Colors.black.withOpacity(0.2),
+                              child: Container(
+                                width: we * 0.5,
+                                height: he * 0.5,
+                                margin: EdgeInsets.only(
+                                  top: 10,
+                                  left: 16,
+                                  right: 5,
+                                  bottom: 10,
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "${taskProvider.taskList[i].taskNumber.toString()} tasks",
+                                                style: TextStyle(
+                                                  color: Colors.grey.withOpacity(0.9),
+                                                ),
+                                              ),
+                                              Spacer(),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.delete,
+                                                  size: 20,
+                                                  color: Colors.redAccent.withOpacity(0.6),
+                                                ),
+                                                onPressed: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) => AlertDialog(
+                                                      title: Text('Confirm Delete'),
+                                                      content: Text(
+                                                          'Are you sure you want to delete this category?'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(context).pop();
+                                                          },
+                                                          child: Text('Cancel'),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(context).pop();
+                                                            taskProvider.deleteCategory(
+                                                                taskProvider.taskList[i].title);
+                                                          },
+                                                          child: Text('Delete'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: he * 0.0001,
+                                          ),
+                                          Text(
+                                            taskProvider.taskList[i].title,
+                                            style: TextStyle(
+                                              fontSize: 23,
+                                              color: Theme.of(context).primaryColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(height: he * 0.02),
+                                          Padding(
+                                            padding: EdgeInsets.only(right: 30),
+                                            child: LineProgress(
+                                              value: taskProvider.taskList[i].value.toDouble(),
+                                              Color: taskProvider.taskList[i].progressColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        } else if (i == taskProvider.taskList.length) {
+                          return GestureDetector(
+                            onTap: () {
+                              AddCategoryDialog.showAddCategoryDialog(context);
+                            },
+                            child: Card(
+                              color: Color(0xEAFFFFFF),
+                              margin: EdgeInsets.only(left: 23),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              elevation: 10,
+                              shadowColor: Colors.black.withOpacity(0.2),
+                              child: Container(
+                                width: we * 0.5,
+                                height: he * 0.1,
+                                margin: EdgeInsets.only(
+                                  top: 30,
+                                  bottom: 30,
+                                  left: 11,
+                                ),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white10,
+                                ),
+                                child: Icon(
+                                  Icons.add,
+                                  size: 48,
+                                  color: kPrimaryColor,
+                                ),
+                              ),
+                            ),
+                          );
+                        } else {
+                          return SizedBox.shrink();
+                        }
+                      },
+                      itemCount: taskProvider.taskList.length + 1,
+                    ),
+                  ),
+                ),
+
+                FadeAnimation(
+                  delay: 0.8,
+                  child: Container(
+                    margin: EdgeInsets.only(top: he * 0.02, left: 18),
+                    width: we * 0.9,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "TASKS",
+                          style: TextStyle(
+                            letterSpacing: 1,
+                            color: Colors.grey.withOpacity(0.8),
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: he * 0.01),
+                FadeAnimation(
+                  delay: 0.8,
+                  child: Row(
+                    children: [
+                      DropdownButton<TaskFilter>(
+                        padding: EdgeInsets.only(left: 20),
+                        hint: Text("Filter"),
+                        onChanged: (TaskFilter? newValue) {
+                          if (newValue != null) {
+                            taskProvider.updateFilter(newValue, '');
+                            taskProvider.updateSortOption(TaskSortOption.none);
+                          }
+                        },
+                        items: TaskFilter.values
+                            .map((TaskFilter filter) => DropdownMenuItem(
+                          value: filter,
+                          child: Text(
+                            filter == TaskFilter.all
+                                ? 'All Tasks'
+                                : filter == TaskFilter.done
+                                ? 'Done'
+                                : 'Pending',
+                          ),
+                        ))
+                            .toList(),
+                      ),
+                      Spacer(
+                        flex: 1,
+                      ),
+                      DropdownButton<TaskSortOption>(
+                        padding: EdgeInsets.only(right: 20),
+                        hint: Text("Sort"),
+                        onChanged: (TaskSortOption? newValue) {
+                          if (newValue != null) {
+                            taskProvider.updateSortOption(newValue);
+                            taskProvider.updateFilter(TaskFilter.all, '');
+                          }
+                        },
+                        items: TaskSortOption.values
+                            .map((TaskSortOption filter) => DropdownMenuItem(
+                          value: filter,
+                          child: Text(
+                            filter == TaskSortOption.none
+                                ? 'None'
+                                : filter == TaskSortOption.dueDate
+                                ? 'Due date'
+                                : 'Create Date',
+                          ),
+                        ))
+                            .toList(),
                       ),
                     ],
                   ),
                 ),
-              ),
-              FadeAnimation(
-                delay: 1,
-                child: SizedBox(
-                  width: we * 2,
-                  height: he * 0.16,
-                  child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemBuilder: (context, i) {
-                      return Card(
-                        color: Color(0xEAFFFFFF),
-                        margin: const EdgeInsets.only(left: 23),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        clipBehavior: Clip.antiAlias,
-                        elevation: 10,
-                        shadowColor: Colors.black.withOpacity(0.2),
-                        child: Container(
-                          width: we * 0.5,
-                          height: he * 0.1,
-                          margin: const EdgeInsets.only(
-                            top: 25,
-                            left: 14,
+                StreamBuilder(
+                  stream: taskProvider.taskStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final tasks = snapshot.data;
+
+                      if (taskProvider.taskStream == null) {
+                        return Center(
+                          child: Text(
+                            "No tasks available",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey.withOpacity(0.8),
+                            ),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${notes.length.toString()} tasks",
-                                style: TextStyle(
-                                    color: Colors.grey.withOpacity(0.9)),
+                        );
+                      }
+
+                      return ListView.builder(
+                        padding: EdgeInsets.only(left: 15, right: 15),
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: tasks?.length,
+                        itemBuilder: (context, index) {
+                          final task = tasks![index];
+                          return Dismissible(
+                            key: Key(task.id),
+                            direction: DismissDirection.endToStart,
+                            background: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(22),
+                                color: Colors.redAccent,
                               ),
-                              SizedBox(
-                                height: he * 0.01,
-                              ),
-                              Text(
-                                tasklist[i].title,
-                                style: TextStyle(
-                                  fontSize: 23,
-                                  color: Theme
-                                      .of(context)
-                                      .primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: he * 0.03),
-                              Padding(
-                                  padding: const EdgeInsets.only(right: 30),
-                                  child: LineProgress(
-                                    value: notes.length.toDouble(),
-                                    Color: tasklist[i].progressColor,
-                                  )),
-                            ],
-                          ),
-                        ),
+                              padding: EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Icon(Icons.delete, color: Colors.white),
+                            ),
+                            onDismissed: (direction) async {
+                              taskProvider.deleteTask(task.id);
+                              CustomSnackBar.showSuccess(
+                                  'Task Deleted Successfully');
+                            },
+                            child: TaskBlock(
+                              title: task.title,
+                              description: task.description,
+                              onDelete: () async {
+                                final confirmed = await CustomDialog
+                                    .showDeleteConfirmationDialog(context);
+                                if (confirmed != null && confirmed) {
+                                  taskProvider.deleteTask(task.id);
+                                  CustomSnackBar.showSuccess(
+                                      'Task Deleted Successfully');
+                                }
+                              },
+                              done: task.done,
+                              onDone: () {
+                                taskProvider.updateTaskStatus(
+                                    task.id, !task.done, context);
+                              },
+                              dueDate: task.dueDate,
+                              createDate: task.createDate,
+                            ),
+                          );
+                        },
                       );
-                    },
-                    scrollDirection: Axis.horizontal,
-                    itemCount: tasklist.length,
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+        floatingActionButton: Stack(
+          children: [
+            Positioned(
+              left: currentPosition.dx,
+              top: currentPosition.dy,
+              child: Draggable(
+                feedback: const Material(
+                  type: MaterialType.transparency,
+                  child: SizedBox(
+                    width: 56,
+                    height: 56,
+                    child: FloatingActionButton(
+                      onPressed: null,
+                      backgroundColor: kPrimaryColor,
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                childWhenDragging: Container(),
+                onDraggableCanceled: (velocity, offset) {
+                  setState(() {
+                    // Ensure FAB stays within screen bounds
+                    // Ensure FAB stays within screen bounds
+                    double newX = offset.dx.clamp(0.0, we - 60); // Clamp horizontally
+                    double newY = offset.dy.clamp(
+                      MediaQuery.of(context).padding.top + kToolbarHeight,
+                      he - 60,
+                    ); // Clamp vertically
+
+                    currentPosition = Offset(newX, newY);
+                  });
+                },
+                child: FloatingActionButton(
+                  onPressed: () async {
+                    Get.to(() => const AddTaskScreen());
+                  },
+                  backgroundColor: kPrimaryColor,
+                  child: const Icon(
+                    Icons.add,
+                    color: Colors.white,
                   ),
                 ),
               ),
-              SizedBox(
-                height: he * 0.04,
-              ),
-              Container(
-                alignment: Alignment.topLeft,
-                margin: const EdgeInsets.only(left: 15, bottom: 15),
-                child: Text(
-                  "TODAY'S TASKS",
-                  style: TextStyle(
-                      letterSpacing: 1,
-                      color: Colors.grey.withOpacity(0.8),
-                      fontSize: 13),
-                ),
-              ),
-              FadeAnimation(
-                  delay: 1,
-                  child: SizedBox(
-                      width: we * 0.9,
-                      height: he * 0.4,
-                      child: isLoading
-                          ? const CircularProgressIndicator()
-                          : notes.isEmpty
-                          ? Container(
-                          margin:
-                          const EdgeInsets.only(left: 130, top: 120),
-                          child: Text("No Tasks",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Theme
-                                    .of(context)
-                                    .primaryColor,
-                              )))
-                          : ListView(
-                          physics: const BouncingScrollPhysics(),
-                          children: notes.map((note) {
-                            final IsSelected = all_selected_tasks
-                                .contains(note.description);
-
-                            return Slidable(
-                                endActionPane: ActionPane(
-                                  // A motion is a widget used to control how the pane animates.
-                                  motion: const StretchMotion(),
-
-                                  // A pane can dismiss the Slidable.
-
-                                  // All actions are defined in the children parameter.
-                                  children: [
-                                    // A SlidableAction can have an icon and/or a label.
-                                    SlidableAction(
-                                      onPressed: (context) async {
-                                        NotesDatabase.instance
-                                            .delete(note.id!);
-                                        refreshNote();
-                                      },
-                                      backgroundColor: const Color(0xFFFE4A49),
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.delete,
-                                      label: "Delete",
-                                    ),
-                                    SlidableAction(
-                                      onPressed: (context) async {
-                                        await Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Note_Task(
-                                                      note: note,
-                                                    )));
-                                        refreshNote();
-                                      },
-                                      backgroundColor: const Color(0xFF21B7CA),
-                                      foregroundColor: Colors.white,
-                                      label: "Edit",
-                                      icon: Icons.edit,
-                                    ),
-                                  ],
-                                ),
-                                child: builditem(note, IsSelected));
-                          }).toList()))),
-            ],
-          ),
+            ),
+          ],
         ),
-        floatingActionButton: FadeAnimation(
-          delay: 1.2,
-          child: FloatingActionButton(
-            onPressed: () async {
-              Get.to(() => const AddTaskScreen());
-              refreshNote();
-            },
-            backgroundColor: kPrimaryColor,
-            child: const Icon(Icons.add, color: Colors.white,),
-          ),
-        ),
-      );
-    }
-      );
-  }
 
 
-  // TODO : Tasks Items ...
-  Widget builditem(Note item, IsSelected) {
-    return CardTasks(
-      Index: item.id!,
-      onSelected: (tasks) async {
-        setState(() {
-          IsSelected
-              ? all_selected_tasks.remove(item.description)
-              : all_selected_tasks.add(item.description);
-        });
-        TaskerPreference.setStringList(all_selected_tasks);
-      },
-      isActive: IsSelected,
-      taskUser: item,
-    );
+      );
+    });
   }
 }

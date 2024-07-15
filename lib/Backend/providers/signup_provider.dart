@@ -1,11 +1,12 @@
+import 'package:Todo_list_App/Backend/providers/task_provider.dart';
 import 'package:Todo_list_App/Screens/MenuDrawer/DrawerState.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:Todo_list_App/Screens/TaskScreens/tasks_screen.dart';
 import 'package:ndialog/ndialog.dart';
+import 'package:provider/provider.dart';
 
 import '../../Screens/custom_widgets/custom_snackbars.dart';
 
@@ -33,8 +34,12 @@ class SignUpProvider extends ChangeNotifier {
         password: password,
       );
       User? user = userCredential.user;
-      storeUserData(userId: user!.uid, name: name, email: email);
-      CustomSnackBar.showSuccess('SignUp Successful');
+      await storeUserData(userId: user!.uid, name: name, email: email);
+      Provider.of<TaskProvider>(context, listen:false).getUserName();
+      Provider.of<TaskProvider>(context, listen:false).fetchCategories_();
+      Provider.of<TaskProvider>(context, listen:false).fetchTasks();
+
+
       dialog.dismiss();
       Get.offAll(() => const DrawerState());
     } catch (e) {
@@ -52,6 +57,8 @@ class SignUpProvider extends ChangeNotifier {
       required String name,
       required String email}) async {
     try {
+      print("USER ID");
+      print(userId);
       await _firestore.collection('users').doc(userId).set({
         'email': email,
         'uid': userId,
@@ -62,5 +69,17 @@ class SignUpProvider extends ChangeNotifier {
 
       rethrow;
     }
+
+    // add default category
+    try {
+      await _firestore.collection('categories').add({
+        'name': 'Work',
+        'uid': userId,
+      });
+    } catch (e) {
+      print('Error adding default category: $e');
+    }
+
   }
+
 }

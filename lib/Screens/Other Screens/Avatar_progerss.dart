@@ -28,7 +28,9 @@ class _Progerss_AvaterState extends State<Progerss_Avater>
   @override
   void dispose() {
     // TODO: implement dispose
+
     _controller!.reverse();
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -50,7 +52,7 @@ class _Progerss_AvaterState extends State<Progerss_Avater>
           const Center(
               child: CircleAvatar(
                   radius: 45.0,
-                  backgroundImage: AssetImage("assets/Todo.png"))),
+                  backgroundImage: AssetImage("assets/user.png"))),
         ],
       ),
     );

@@ -7,7 +7,7 @@ class CustomDialog {
     return await Get.dialog<bool>(
       AlertDialog(
         title: const Text('Delete Task'),
-        content: Text('Are you sure you want to delete this task?'),
+        content: const Text('Are you sure you want to delete this task?'),
         actions: [
           TextButton(
             child: const Text('Cancel'),

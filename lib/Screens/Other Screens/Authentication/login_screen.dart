@@ -1,3 +1,4 @@
+import 'package:Todo_list_App/Backend/providers/task_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
@@ -20,6 +21,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passController = TextEditingController();
+  late TaskProvider taskProvider;
 
   @override
   Widget build(BuildContext context) {

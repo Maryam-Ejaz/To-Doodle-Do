@@ -7,15 +7,17 @@ class Task {
   final Timestamp dueDate;
   final Timestamp createDate;
   final String description;
+  final String category;
 
-  Task(this.title, this.description, this.id, this.done, this.dueDate,
+  Task(this.title, this.description, this.id, this.category, this.done, this.dueDate,
       this.createDate);
 
   Task.fromSnapshot(DocumentSnapshot snapshot)
       : id = snapshot.id,
         title = snapshot['title'],
         done = snapshot['done'],
+        category = snapshot['category'],
         dueDate = snapshot['due'],
-        createDate = snapshot['create_at'],
+        createDate = snapshot['created_at'],
         description = snapshot['description'];
 }

@@ -56,8 +56,8 @@ class DefaultFirebaseOptions {
       projectId: "to-doodle-do",
       storageBucket: "to-doodle-do.appspot.com",
       messagingSenderId: "269222759091",
-      appId: "1:269222759091:web:52794d5e3eb8a63638fec6",
-      measurementId: "G-PSHBDHHSEP"
+      appId: "1:269222759091:web:138c87eb84aa0da738fec6",
+      measurementId: "G-PXDB6MLLPN",
   );
 
   static const FirebaseOptions android = FirebaseOptions(

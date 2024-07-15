@@ -17,6 +17,7 @@ class _DrawerState extends State<DrawerState> {
   late double scaleFactor;
   late bool isDrawingOpen;
   bool isDragging = false;
+  Widget? currentPage;
 
   void openDrawer() {
     setState(() {
@@ -81,4 +82,18 @@ class _DrawerState extends State<DrawerState> {
           )),
     );
   }
+
+// Method to set the current page based on a parameter
+// void setPage(String pageName) {
+//   setState(() {
+//     if (pageName == 'HomePage') {
+//       currentPage = MyHomePage(openDrawer: openDrawer);
+//     } else if (pageName == 'AnalyticsPage') {
+//       currentPage = AnalyticsPage();
+//     }
+//     // Add more conditions for other pages as needed
+//   });
+// }
+
+
 }

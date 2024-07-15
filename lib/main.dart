@@ -19,27 +19,46 @@ import 'Screens/Other Screens/introduction_screen.dart';
 int? initScreen;
 SharedPreferences? prefs;
 
-Future main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await TaskerPreference.init(); // for initialization of SharedPreference..
+  prefs = await SharedPreferences.getInstance();
   initScreen = (prefs?.getInt("initScreen"));
   prefs?.setInt("initScreen", 1);
-  //LocalNotificationService().init();
-  runApp(const MyApp());
+  // LocalNotificationService().init();
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // initial key for MultiProvider
+  String _uniqueKey = '';
+
+  // Method to trigger rebuild MultiProvider
+  void triggerRebuildMultiProvider() {
+    DateTime now = DateTime.now();
+    int timestamp = now.millisecondsSinceEpoch;
+    setState(() {
+      _uniqueKey = timestamp.toString();
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
+      key: ObjectKey(_uniqueKey),
       providers: [
-        ChangeNotifierProvider(create: (_) => LoginProvider()),
+        ChangeNotifierProvider(create: (_) => LoginProvider(triggerRebuildMultiProvider)),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => SignUpProvider()),
         ChangeNotifierProvider(create: (_) => TaskProvider()),
@@ -55,10 +74,9 @@ class MyApp extends StatelessWidget {
             initialRoute: initScreen == 0 || initScreen == null ? "/" : "home",
             routes: {
               '/': (context) => const MyIntroductionScreen(),
-              //'home': (context) => const DrawerState()
               'home': (context) => FirebaseAuth.instance.currentUser == null
                   ? const LoginScreen()
-                  : const DrawerState()
+                  : const DrawerState(),
             },
           );
         },

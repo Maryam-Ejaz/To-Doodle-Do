@@ -13,7 +13,7 @@ class Timecall extends StatelessWidget {
     } if (nowtime >= 16){
       text = "Good Evening  🌆";
     } if (nowtime >= 18) {
-      text = "Heya!";  // Good Night  🌙
+      text = "Good Night  🌙";  // Good Night  🌙
     }
 
     return text;

@@ -9,6 +9,7 @@ class LocalNotificationService {
   final FlutterLocalNotificationsPlugin localNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+
   Future<void> init() async {
     print('local notification init');
 
@@ -71,8 +72,16 @@ class LocalNotificationService {
     String? payLoad,
     required DateTime scheduledNotificationDateTime,
   }) async {
+
     print('local notification started');
+    tz.initializeTimeZones();
     print(tz.TZDateTime.from(scheduledNotificationDateTime, tz.local));
+
+    // Ensure scheduledNotificationDateTime is in the future
+    if (scheduledNotificationDateTime.isBefore(DateTime.now())) {
+      scheduledNotificationDateTime = DateTime.now().add(const Duration(seconds: 5)); // Example: schedule 5 seconds from now
+    }
+
     return localNotificationsPlugin.zonedSchedule(
         id,
         title,

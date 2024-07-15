@@ -1,4 +1,8 @@
 import 'package:Todo_list_App/Backend/data/colors.dart';
+import 'package:Todo_list_App/Backend/providers/login_provider.dart';
+import 'package:Todo_list_App/Screens/MenuDrawer/DrawerState.dart';
+import 'package:Todo_list_App/Screens/Other%20Screens/aboutScreen.dart';
+import 'package:Todo_list_App/Screens/Other%20Screens/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -6,7 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../Backend/providers/task_provider.dart';
 import '../Other Screens/Avatar_progerss.dart';
-import '../Other Screens/chart.dart';
+import '../Other Screens/analyticsPage.dart';
 import 'DrawerItems.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -21,11 +25,13 @@ class _DrawerWidgetState extends State<DrawerWidget>
     with SingleTickerProviderStateMixin {
   final double runAnim = 0.4;
   late String? userName;
+  LoginProvider? login_provider;
 
   @override
   Widget build(BuildContext context) {
     var we = MediaQuery.of(context).size.width;
     var he = MediaQuery.of(context).size.height;
+    //login_provider = Provider.of<LoginProvider>(context, listen:true);
 
     return SingleChildScrollView(
         child: Column(
@@ -35,7 +41,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
         SizedBox(
           height: he * 0.02,
         ),
-        //buildText(context),
+        buildText(context),
         SizedBox(
           height: he * 0.08,
         ),
@@ -59,28 +65,33 @@ class _DrawerWidgetState extends State<DrawerWidget>
 
             // Define specific actions for each drawer item
             switch (item.title) {
-              case "Categories":
+              case "Home":
                 onTap = () {
-                  // Navigate to Categories screen
+                  Get.to(() => const DrawerState());
 
                 };
                 break;
               case "Analytics":
                 onTap = () {
                   // Navigate to Analytics screen
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => AnalyticsPage(),
+                  ));
 
                 };
                 break;
               case "About":
                 onTap = () {
                   // Navigate to About screen
-
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const AboutScreen(),
+                  ));
                 };
                 break;
               case "Logout":
                 onTap = () {
                   // Handle Logout
-                  taskProvider.logout();
+                  Provider.of<LoginProvider>(context, listen: false).logout();
                   Get.back();
                 };
                 break;
@@ -142,27 +153,20 @@ class _DrawerWidgetState extends State<DrawerWidget>
 
       return Consumer<TaskProvider>(builder: (context, taskProvider, child)
       {
+        userName = taskProvider.username.toString();
         return Container(
-          margin: EdgeInsets.only(right: we * 0.4),
+          margin: EdgeInsets.only(right: we * 0.5, top: he * 0.02),
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
           Text(
-          "{$userName}",
+          userName!,
           style: GoogleFonts.lato(
-              fontSize: 40,
+              fontSize: 30,
               letterSpacing: 2,
               color: Colors.white,
               fontWeight: FontWeight.bold),
         ),
-      Text(
-      "Deep",
-      style: GoogleFonts.lato(
-      fontSize: 40,
-      letterSpacing: 2,
-      color: Colors.white,
-      fontWeight: FontWeight.bold),
-      ),
       ],
       ),
       );

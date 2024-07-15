@@ -25,9 +25,9 @@ class _MyIntroductionScreenState extends State<MyIntroductionScreen> {
           PageViewModel(
             title: title,
             body:
-                'Welcome to MyTasks App! Experience the ultimate productivity tool for managing '
-                'your tasks effectively. With a sleek and user-friendly interface, MyTasks '
-                'helps you stay organized and focused.',
+                'Welcome to To Doodle Do! Experience the ultimate productivity '
+                'tool for managing your tasks effectively. With a sleek and user-friendly '
+                'interface, it helps you stay organized and focused.',
             image: Image.asset(
               'assets/1.png',
               fit: BoxFit.cover,
@@ -36,10 +36,9 @@ class _MyIntroductionScreenState extends State<MyIntroductionScreen> {
           PageViewModel(
             title: title,
             body: ' Create multiple to-do lists, add '
-                'tasks with due dates and priorities, and track your progress effortlessly.'
-                'Collaborate with others by sharing lists and assigning tasks. With real-time '
-                'synchronization powered by Firebase, access your tasks anytime, anywhere, '
-                'and on any device.',
+                'tasks with due dates and priorities, and track your progress '
+                'effortlessly. With real-time synchronization powered by '
+                'Firebase, access your tasks anytime, anywhere.',
             image: Image.asset(
               'assets/2.png',
               fit: BoxFit.cover,
@@ -48,8 +47,8 @@ class _MyIntroductionScreenState extends State<MyIntroductionScreen> {
           PageViewModel(
             title: title,
             body: ' Stay on top of your tasks with reminders and '
-                'notifications. Boost your productivity and achieve your goals with MyTasks. '
-                'Download now and unleash your productivity potential.',
+                'notifications. Boost your productivity and achieve your goals w'
+            'ith To Doodle Do. ',
             image: Image.asset(
               'assets/3.png',
               fit: BoxFit.cover,
